@@ -1,0 +1,65 @@
+# Sync only essentials to run the GUI via gui_main.py
+# Ignore everything by default
+/*
+
+# Allow only these essential files
+!.gitignore
+!README.md
+!INSTALLATION_GUIDE.md
+!requirements.txt
+!pyproject.toml
+!gui_main.py
+
+# If you want the custom window icon to be part of the repo, uncomment this:
+# !domain_reviewer_icon.ico
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+.venv/
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+*.spec
+
+# Executables
+*.exe
+
+# Icon and output files
+*.ico
+*.xlsx
+
+# Environment files
+.env
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Test and sample files (optional, keep test.txt)
+sample_domains.txt
+blocked_domains.txt
+env_example.txt
+
+# Logs and temporary files
+*.log
+*.tmp
+
+# Ignore output from test scripts
+test_setup.py
+
+# Ignore IDE/project files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace 
