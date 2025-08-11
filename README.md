@@ -15,6 +15,32 @@ A Python tool to review domains against VirusTotal's OSINT database and WHOIS in
 - **GUI Interface**: User-friendly graphical interface with file selection
 - **Account Type Support**: Personal (15s delay, max 500 domains) and Enterprise (1s delay, unlimited)
 
+## Updated Features
+
+can parse defanged URL's. the result will not be defanged to make it easy to upload to security tools.
+Risk Score Calculation (0-100 scale)
+Reputation Score: Negative values add to risk (scaled)
+Malicious Vendors: +10 points per vendor
+Suspicious Vendors: +5 points per vendor
+Risk Words in Categories: +15 points for each risk word found
+Newly Registered Domain: +20 points
+Capped at 100 for maximum risk
+Risk Categories
+80-100: High Risk (Bright Red)
+60-79: Medium-High Risk (Orange)
+40-59: Medium Risk (Yellow)
+20-39: Low-Medium Risk (Light Green)
+0-19: Low Risk (Dark Green)
+🎨 Excel Heatmap Features
+Visual Enhancements
+Row-based coloring: Entire rows colored based on risk level
+Risk Score column: Color gradient from green to red
+Sorted by risk: Highest risk domains appear first
+Risk Summary sheet: Statistics and breakdown by risk level
+Risk Words Detected
+malicious, phishing, abuse, scam, fraud, malware
+suspicious, dangerous, threat, attack, exploit
+
 ## Prerequisites
 
 - Python 3.8 or higher
@@ -36,14 +62,6 @@ A Python tool to review domains against VirusTotal's OSINT database and WHOIS in
    - Sign up for a free account
    - Get your API key from your profile
 
-4. **Configure your API key**:
-   - Copy `env_example.txt` to `.env`
-   - Replace `your_api_key_here` with your actual VirusTotal API key
-   ```bash
-   cp env_example.txt .env
-   # Edit .env file with your API key
-   ```
-
 ### Option 2: GUI Executable (Recommended)
 
 1. **Build the executable**:
@@ -60,9 +78,9 @@ A Python tool to review domains against VirusTotal's OSINT database and WHOIS in
 ### GUI Version (Recommended)
 
 1. **Launch the application**:
-   - Double-click `DomainReviewer.exe` (after building)
-   - Or run: `python gui_main.py`
-
+   - run: `python gui_main.py`
+   - Or Double-click `DomainReviewer.exe` (after building)
+   
 2. **Configure settings**:
    - Enter your VirusTotal API key
    - Select account type:
@@ -87,7 +105,7 @@ A Python tool to review domains against VirusTotal's OSINT database and WHOIS in
 
 2. **Run the tool**:
    ```bash
-   python main.py
+   python gui_main.py
    ```
 
 3. **Review results**:
@@ -238,27 +256,19 @@ Results saved to: domain_review_results_20241201_143022.xlsx
 
 ### Common Issues
 
-1. **"VIRUSTOTAL_API_KEY environment variable not set"**
-   - Ensure you have a `.env` file with your API key
-   - Check that the key is correctly formatted
-
-2. **"File 'blocked_domains.txt' not found"**
-   - Create the input file with your domain list
-   - Ensure it's in the same directory as the script
-
-3. **"Personal accounts are limited to 500 domains"**
+1. **"Personal accounts are limited to 500 domains"**
    - Reduce the number of domains in your input file
    - Or upgrade to an enterprise account
 
-4. **Rate limit errors**
+2. **Rate limit errors**
    - The tool automatically handles rate limits
    - For large domain lists, consider upgrading to a paid VirusTotal plan
 
-5. **Executable not working**
+3. **Executable not working**
    - Ensure all dependencies are installed before building
    - Try running the Python version first: `python gui_main.py`
 
-6. **WHOIS query failures**
+4. **WHOIS query failures**
    - Some domains may have restricted WHOIS information
    - The tool will continue processing with available data
 
@@ -286,36 +296,5 @@ This tool is provided as-is for educational and security research purposes.
 
 Feel free to submit issues, feature requests, or pull requests to improve the tool.
 
-## 🎨 Custom Icon
 
-The application includes a custom icon with "CDC" branding:
 
-### **Icon Features**
-- **Custom Design**: Blue circular icon with "CDC" text
-- **Multiple Sizes**: 16x16 to 256x256 pixels for all Windows contexts
-- **Professional Look**: Clean, modern design suitable for enterprise use
-
-### **Icon Usage**
-- **Executable Icon**: The .exe file displays the custom icon
-- **Window Icon**: Application window shows the custom icon
-- **Taskbar Icon**: Appears in Windows taskbar with custom icon
-- **File Explorer**: Executable shows custom icon in file listings
-
-### **Creating/Updating the Icon**
-```bash
-# Install Pillow for icon creation
-pip install Pillow
-
-# Generate the icon
-python create_icon.py
-
-# Rebuild the executable with new icon
-python -m PyInstaller domain_reviewer.spec
-```
-
-### **Icon File**
-- **Location**: `domain_reviewer_icon.ico`
-- **Format**: Windows ICO format with multiple resolutions
-- **Design**: Blue gradient circle with "CDC" text overlay
-
-## 🚀 Quick Start
