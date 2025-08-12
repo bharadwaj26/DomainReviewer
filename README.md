@@ -17,29 +17,29 @@ A Python tool to review domains against VirusTotal's OSINT database and WHOIS in
 
 ## Updated Features
 
-can parse defanged URL's. the result will not be defanged to make it easy to upload to security tools.
-Risk Score Calculation (0-100 scale)
-Reputation Score: Negative values add to risk (scaled)
-Malicious Vendors: +10 points per vendor
-Suspicious Vendors: +5 points per vendor
-Risk Words in Categories: +15 points for each risk word found
-Newly Registered Domain: +20 points
-Capped at 100 for maximum risk
-Risk Categories
-80-100: High Risk (Bright Red)
-60-79: Medium-High Risk (Orange)
-40-59: Medium Risk (Yellow)
-20-39: Low-Medium Risk (Light Green)
-0-19: Low Risk (Dark Green)
+- can parse defanged URL's. the result will not be defanged to make it easy to upload to security tools.
+- Risk Score Calculation (0-100 scale)
+- Reputation Score: Negative values add to risk (scaled)
+- Malicious Vendors: +10 points per vendor
+- Suspicious Vendors: +5 points per vendor
+- Risk Words in Categories: +15 points for each risk word found (malicious, phishing, abuse, scam, fraud, malware, suspicious, dangerous, threat, attack, exploit)
+- Newly Registered Domain: +20 points
+- Capped at 100 for maximum risk
+- Risk Scoring
+  -  80-100: High Risk (Bright Red)
+  -  60-79: Medium-High Risk (Orange)
+  -  40-59: Medium Risk (Yellow)
+  -  20-39: Low-Medium Risk (Light Green)
+  -  0-19: Low Risk (Dark Green)
+  
 🎨 Excel Heatmap Features
-Visual Enhancements
-Row-based coloring: Entire rows colored based on risk level
-Risk Score column: Color gradient from green to red
-Sorted by risk: Highest risk domains appear first
-Risk Summary sheet: Statistics and breakdown by risk level
-Risk Words Detected
-malicious, phishing, abuse, scam, fraud, malware
-suspicious, dangerous, threat, attack, exploit
+- Visual Enhancements
+- Row-based coloring: Entire rows colored based on risk level
+- Risk Score column: Color gradient from green to red
+- Sorted by risk: Highest risk domains appear first
+- Risk Summary sheet: Statistics and breakdown by risk level
+- Risk Words Detected
+
 
 ## Prerequisites
 
@@ -295,6 +295,7 @@ This tool is provided as-is for educational and security research purposes.
 ## Contributing
 
 Feel free to submit issues, feature requests, or pull requests to improve the tool.
+
 
 
 
