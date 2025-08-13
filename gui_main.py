@@ -40,7 +40,35 @@ class VirusTotalDomainReviewer:
         Calculate risk score based on multiple factors
         """
         risk_score = 0
+        is_high_risk = False
         
+        # Check for high-risk conditions that force high risk categorization
+        risk_words = ['malicious', 'phishing', 'abuse', 'scam', 'fraud', 'malware', 
+                     'suspicious', 'dangerous', 'threat', 'attack', 'exploit']
+        
+        # High-risk condition 1: Category contains risk words
+        has_risk_words = False
+        if categories != 'N/A' and categories:
+            categories_lower = categories.lower()
+            for word in risk_words:
+                if word in categories_lower:
+                    has_risk_words = True
+                    break
+        
+        # High-risk condition 2: Reputation score greater than -5
+        has_bad_reputation = False
+        if reputation_score != 'N/A' and reputation_score is not None:
+            if reputation_score > -5 and reputation_score < 0:
+                has_bad_reputation = True
+        
+        # High-risk condition 3: Newly registered domain
+        is_newly_reg = bool(is_newly_registered)
+        
+        # If any high-risk condition is met, set as high risk
+        if has_risk_words or has_bad_reputation or is_newly_reg:
+            is_high_risk = True
+        
+        # Calculate base risk score
         # Reputation score (negative = higher risk)
         if reputation_score != 'N/A' and reputation_score is not None:
             if reputation_score < 0:
@@ -57,17 +85,16 @@ class VirusTotalDomainReviewer:
             risk_score += suspicious_vendors * 5
         
         # Categories containing risk words
-        if categories != 'N/A' and categories:
-            risk_words = ['malicious', 'phishing', 'abuse', 'scam', 'fraud', 'malware', 
-                         'suspicious', 'dangerous', 'threat', 'attack', 'exploit']
-            categories_lower = categories.lower()
-            for word in risk_words:
-                if word in categories_lower:
-                    risk_score += 15
+        if has_risk_words:
+            risk_score += 15
         
         # Newly registered domain
         if is_newly_registered:
             risk_score += 20
+        
+        # Force high risk score (minimum 71) if high-risk conditions are met
+        if is_high_risk:
+            risk_score = max(risk_score, 71)
         
         return min(risk_score, 100)  # Cap at 100
 
@@ -351,22 +378,22 @@ class VirusTotalDomainReviewer:
                     # Apply row-based heatmap coloring
                     for row_idx, risk_score in enumerate(df['Risk_Score'], 2):
                         if risk_score > 0:
-                            # Calculate color intensity based on risk score
-                            if risk_score >= 80:
-                                # High risk - Red
+                            # Calculate color intensity based on updated risk score ranges
+                            if risk_score > 70:
+                                # High risk (>70) - Bright Red
                                 fill = PatternFill(start_color='FF0000', end_color='FF0000', fill_type='solid')
-                            elif risk_score >= 60:
-                                # Medium-high risk - Orange
+                            elif risk_score >= 50:
+                                # Medium-high risk (50-70) - Orange
                                 fill = PatternFill(start_color='FF6600', end_color='FF6600', fill_type='solid')
-                            elif risk_score >= 40:
-                                # Medium risk - Yellow
+                            elif risk_score >= 30:
+                                # Medium risk (30-50) - Yellow
                                 fill = PatternFill(start_color='FFFF00', end_color='FFFF00', fill_type='solid')
-                            elif risk_score >= 20:
-                                # Low-medium risk - Light green
-                                fill = PatternFill(start_color='90EE90', end_color='90EE90', fill_type='solid')
+                            elif risk_score >= 10:
+                                # Low-medium risk (10-30) - Light yellow
+                                fill = PatternFill(start_color='FFFACD', end_color='FFFACD', fill_type='solid')
                             else:
-                                # Low risk - Green
-                                fill = PatternFill(start_color='00FF00', end_color='00FF00', fill_type='solid')
+                                # Low risk (0-10) - Light green
+                                fill = PatternFill(start_color='90EE90', end_color='90EE90', fill_type='solid')
                             
                             # Apply fill to the entire row
                             for col in range(1, len(df.columns) + 1):
@@ -377,22 +404,22 @@ class VirusTotalDomainReviewer:
                 summary_data = {
                     'Metric': [
                         'Total Domains',
-                        'High Risk (80-100)',
-                        'Medium-High Risk (60-79)',
-                        'Medium Risk (40-59)',
-                        'Low-Medium Risk (20-39)',
-                        'Low Risk (0-19)',
+                        'High Risk (>70)',
+                        'Medium-High Risk (50-70)',
+                        'Medium Risk (30-50)',
+                        'Low-Medium Risk (10-30)',
+                        'Low Risk (0-10)',
                         'Malicious Domains',
                         'Newly Registered Domains',
                         'Average Risk Score'
                     ],
                     'Count': [
                         len(df),
-                        len(df[df['Risk_Score'] >= 80]),
-                        len(df[(df['Risk_Score'] >= 60) & (df['Risk_Score'] < 80)]),
-                        len(df[(df['Risk_Score'] >= 40) & (df['Risk_Score'] < 60)]),
-                        len(df[(df['Risk_Score'] >= 20) & (df['Risk_Score'] < 40)]),
-                        len(df[df['Risk_Score'] < 20]),
+                        len(df[df['Risk_Score'] > 70]),
+                        len(df[(df['Risk_Score'] >= 50) & (df['Risk_Score'] <= 70)]),
+                        len(df[(df['Risk_Score'] >= 30) & (df['Risk_Score'] < 50)]),
+                        len(df[(df['Risk_Score'] >= 10) & (df['Risk_Score'] < 30)]),
+                        len(df[df['Risk_Score'] < 10]),
                         len(df[df['Is_Malicious'] == True]),
                         len(df[df['Is_Newly_Registered'] == True]),
                         round(df['Risk_Score'].mean(), 2) if len(df) > 0 else 0
@@ -720,7 +747,7 @@ class DomainReviewerGUI:
                     # Calculate risk statistics
                     risk_scores = [r.get('Risk_Score', 0) for r in results if r.get('Risk_Score') is not None]
                     avg_risk = sum(risk_scores) / len(risk_scores) if risk_scores else 0
-                    high_risk = sum(1 for score in risk_scores if score >= 80)
+                    high_risk = sum(1 for score in risk_scores if score > 70)
                     
                     summary = f"Review completed!\n\n"
                     summary += f"XSOAR Case Number: {case_number}\n"
@@ -728,7 +755,7 @@ class DomainReviewerGUI:
                     summary += f"Successfully queried: {successful_queries}\n"
                     summary += f"Malicious domains found: {malicious_domains}\n"
                     summary += f"Newly registered domains: {newly_registered}\n"
-                    summary += f"High risk domains (80+): {high_risk}\n"
+                    summary += f"High risk domains (>70): {high_risk}\n"
                     summary += f"Average risk score: {avg_risk:.1f}\n"
                     summary += f"Results saved to: {output_file}"
                     
